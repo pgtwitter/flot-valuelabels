@@ -39,6 +39,11 @@
       // var ctx            = plot.getCanvas().getContext("2d");
       var hideZero       = plot.getOptions().valueLabels.hideZero;
 
+      var prevY= [];
+      var prevYY= [];
+      var firstDataLength= plot.getData()[0].data.length;
+      for(var i= 0; i < firstDataLength; i++) {prevY[i]= 0; prevYY[i]= 0;}
+
       $.each(plot.getData(), function(ii, series) {
         // Workaround, since Flot doesn't set this value anymore
         series.seriesIndex = ii;
@@ -76,9 +81,19 @@
           val = "" + val;
           val = labelFormatter(val);
 
-          if (val != last_val || i == series.data.length - 1) {
+          if (val != last_val || i == series.data.length - 1 || plot.getOptions().series.stack) {
             var xx = series.xaxis.p2c(x) + plot.getPlotOffset().left;
+            if(plot.getOptions().series.stack) {
+              y+= prevY[i];
+              prevY[i]= y
+            }
             var yy = series.yaxis.p2c(y) - 12 + plot.getPlotOffset().top;
+            if(plot.getOptions().series.stack) {
+              if(ii > 0) {
+                yy-= (prevYY[i] - yy < 12)? 12: 0;
+              }
+              prevYY[i]= yy;
+            }
 
             if ( Math.abs(yy - last_y) > 20 || last_x < xx) {
               last_val = val;
