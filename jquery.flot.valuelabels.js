@@ -140,6 +140,13 @@
           plot.getPlaceholder().append(html);
         }
       });
+      if(showAsHtml && align == 'center') {
+        var tmpdivs= $(".valueLabel,.valueLabelLight");
+        $.each(tmpdivs, function(i, o) {
+          var left= $(o).position().left;
+          $(o).css('left', left - $(o).width() / 2);
+        })
+      }
     });
   }
 
